@@ -1,0 +1,20 @@
+name: Build l3inrada_M
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Clone YMusic
+      run: git clone https://github.com/ymusic-io/YMusicV4.git .
+    - name: Apply Optimizations and Rename
+      run: |
+        sed -i 's/YMusic/l3inrada_M/g' androidApp/src/main/res/values/strings.xml
+        echo 'android { buildTypes { debug { isMinifyEnabled = true; isShrinkResources = true; } } }' >> build.gradle.kts
+    - name: Build
+      run: chmod +x gradlew && ./gradlew assembleDebug
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: l3inrada_M-APK
+        path: androidApp/build/outputs/apk/debug/*.apk
